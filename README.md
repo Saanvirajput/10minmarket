@@ -34,6 +34,7 @@ cd backend
 ```bash
 npm install
 npm run dev
-``
+```
+
 ## 🧪 System Monitoring
 Toggle the **Architecture Observer** (bottom-right button) to watch real-time Kafka events and Saga state transitions as you place orders!
