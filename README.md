@@ -1,6 +1,6 @@
 # 10minmarket ⚡
 
-A high-performance replica of **Zepto** built to showcase and validate advanced backend orchestration, the **Saga Pattern**, and real-time inventory management.
+A high-performance replica of **10 minutes delivery applications** built to showcase and validate advanced backend orchestration, the **Saga Pattern**, and real-time inventory management.
 
 This project was developed as a technical validation of my [Zepto Case Study](https://saanvirajput.github.io/saanvirajput-PORTFOLIO/case-studies/zepto).
 
@@ -34,9 +34,6 @@ cd backend
 ```bash
 npm install
 npm run dev
-```
-
-Visit `http://localhost:3000` to see the live demo.
-
+``
 ## 🧪 System Monitoring
 Toggle the **Architecture Observer** (bottom-right button) to watch real-time Kafka events and Saga state transitions as you place orders!
