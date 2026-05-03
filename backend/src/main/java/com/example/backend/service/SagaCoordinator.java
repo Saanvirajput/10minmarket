@@ -9,10 +9,12 @@ import java.util.concurrent.CompletableFuture;
 public class SagaCoordinator {
     private final InventoryService inventoryService;
     private final EventStreamService eventStream;
+    private final DeliveryService deliveryService;
 
-    public SagaCoordinator(InventoryService inventoryService, EventStreamService eventStream) {
+    public SagaCoordinator(InventoryService inventoryService, EventStreamService eventStream, DeliveryService deliveryService) {
         this.inventoryService = inventoryService;
         this.eventStream = eventStream;
+        this.deliveryService = deliveryService;
     }
 
     public CompletableFuture<Boolean> executeOrder(String orderId, List<OrderItem> items) {
@@ -46,6 +48,10 @@ public class SagaCoordinator {
                 Thread.sleep(500);
                 eventStream.broadcast("KAFKA", "Topic: order.confirmed, Msg: { orderId: " + orderId + " }", "success");
                 eventStream.broadcast("SAGA", "Saga completed successfully for " + orderId, "success");
+                
+                // Trigger Delivery Flow
+                deliveryService.startDeliveryFlow(orderId);
+                
                 return true;
 
             } catch (InterruptedException e) {

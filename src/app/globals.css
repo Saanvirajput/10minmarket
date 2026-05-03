@@ -1,90 +1,61 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
 @theme {
-  --color-zepto-purple: #3C006B;
-  --color-zepto-pink: #FF3269;
-  --color-zepto-background: #FFFFFF;
-  --color-zepto-surface: #F3F4F6;
-  --color-zepto-text: #1F2937;
-  --color-zepto-muted: #6B7280;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --zepto-purple: #3C006B;
+  --zepto-pink: #FF3278;
+  --zepto-yellow: #FFD200;
   
-  --font-inter: "Inter", sans-serif;
+  --color-zepto-purple: #3C006B;
+  --color-zepto-pink: #FF3278;
+  --color-zepto-yellow: #FFD200;
 }
 
 @layer base {
   body {
-    color: var(--color-zepto-text);
-    background: var(--color-zepto-background);
-    font-family: var(--font-inter);
-    overflow-x: hidden;
+    @apply text-[#1F2937] antialiased bg-[#F8FAFC];
+    font-family: var(--font-sans);
   }
 }
 
 @layer components {
-  .glass {
-    background-color: rgb(255 255 255 / 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgb(255 255 255 / 0.2);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  }
-  
-  .btn-primary {
-    background-color: var(--color-zepto-purple);
-    color: white;
-    padding: 0.5rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    &:hover { opacity: 0.9; }
-    &:active { transform: scale(0.95); }
-  }
-  
   .btn-add {
-    border: 1px solid var(--color-zepto-pink);
-    color: var(--color-zepto-pink);
-    padding: 0.25rem 1rem;
-    border-radius: 0.375rem;
-    font-weight: 700;
-    font-size: 0.875rem;
-    transition: all 0.2s;
-    &:hover {
-      background-color: var(--color-zepto-pink);
-      color: white;
-    }
-    &:active { transform: scale(0.9); }
+    @apply border border-[var(--zepto-pink)] text-[var(--zepto-pink)] px-6 py-1.5 rounded-lg font-black text-xs uppercase tracking-wider hover:bg-[var(--zepto-pink)] hover:text-white transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .glass {
+    @apply bg-black/80 backdrop-blur-xl border border-white/10;
+  }
+
+  .product-card {
+    @apply bg-white p-4 rounded-3xl border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300;
+  }
+
+  .category-card {
+    @apply flex flex-col items-center justify-center gap-2 p-4 transition-all duration-300;
   }
 }
 
-/* Custom scrollbar for horizontal categories */
-.hide-scrollbar::-webkit-scrollbar {
+/* Custom Scrollbar for Observer */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-.hide-scrollbar {
+.no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-.category-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  border-radius: 0.75rem;
-  transition: all 0.2s;
-  cursor: pointer;
-  &:hover { background-color: rgb(245 243 255); }
-}
-
-.product-card {
-  position: relative;
-  background-color: white;
-  border-radius: 0.75rem;
-  border: 1px solid rgb(243 244 246);
-  padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: all 0.2s;
-  &:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
 }
