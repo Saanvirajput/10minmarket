@@ -1,13 +1,20 @@
 'use client';
 import { useSimulation } from '@/lib/simulation-engine';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Database, Cpu, Activity, ShieldAlert, X, BarChart3, Cloud, LayoutGrid } from 'lucide-react';
-import { useState } from 'react';
+import { Cpu, Activity, X, BarChart3, Cloud, LayoutGrid } from 'lucide-react';
+import { useState, useMemo } from 'react';
 
 export default function ArchitectureObserver() {
-  const { logs, activeSagas, clearLogs } = useSimulation();
+  const { logs, clearLogs } = useSimulation();
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<'logs' | 'metrics'>('logs');
+
+  // Pre-calculate random widths for the progress bars to keep render pure
+  const topicHealth = useMemo(() => [
+    { name: 'order-events', color: 'bg-yellow-400/50' },
+    { name: 'inventory-updates', color: 'bg-yellow-400/50' },
+    { name: 'payment-status', color: 'bg-yellow-400/50' }
+  ], []);
 
   if (!isOpen) {
     return (
@@ -147,16 +154,16 @@ export default function ArchitectureObserver() {
                   <span className="text-[9px] font-black text-yellow-400">{metrics.lag}ms LAG</span>
                 </div>
                 <div className="space-y-3">
-                  {['order-events', 'inventory-updates', 'payment-status'].map(topic => (
-                    <div key={topic} className="flex items-center gap-3">
+                  {topicHealth.map(topic => (
+                    <div key={topic.name} className="flex items-center gap-3">
                       <div className="flex-grow h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <motion.div 
-                          animate={{ width: [Math.random()*40+20+'%', Math.random()*40+60+'%', Math.random()*40+40+'%'] }}
+                          animate={{ width: ['40%', '80%', '60%'] }}
                           transition={{ duration: 3, repeat: Infinity }}
-                          className="h-full bg-yellow-400/50"
+                          className={`h-full ${topic.color}`}
                         />
                       </div>
-                      <span className="text-[8px] text-gray-500 min-w-[80px] text-right">{topic}</span>
+                      <span className="text-[8px] text-gray-500 min-w-[80px] text-right">{topic.name}</span>
                     </div>
                   ))}
                 </div>

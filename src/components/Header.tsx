@@ -14,18 +14,28 @@ interface HeaderProps {
 
 export default function Header({ onSearchChange, onOpenCart, onReset }: HeaderProps) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [location, setLocation] = useState('Select Location');
+  const [location, setLocation] = useState('Fetching Location...');
   const itemsCount = useCart((state) => state.items.length);
   const total = useCart((state) => state.total());
   const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setLocation(`Mumbai, ${position.coords.latitude.toFixed(2)}, ${position.coords.longitude.toFixed(2)}`);
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          const address = data.address.suburb || data.address.neighbourhood || data.address.village || data.address.city || 'Mumbai';
+          setLocation(`${address}, ${data.address.state || 'Maharashtra'}`);
+        } catch (error) {
+          setLocation(`Mumbai, ${latitude.toFixed(2)}, ${longitude.toFixed(2)}`);
+        }
       }, () => {
         setLocation('Mumbai, Maharashtra');
       });
+    } else {
+      setLocation('Mumbai, Maharashtra');
     }
   }, []);
 

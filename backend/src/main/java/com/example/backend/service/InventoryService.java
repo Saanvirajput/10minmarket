@@ -11,13 +11,10 @@ public class InventoryService {
 
     public InventoryService(EventStreamService eventStream) {
         this.eventStream = eventStream;
-        // Seed some data
-        stock.put("p1", 50);
-        stock.put("p2", 50);
-        stock.put("p3", 50);
-        stock.put("p4", 50);
-        stock.put("p5", 50);
-        stock.put("p6", 50);
+        // Seed data for all products p1 through p18
+        for (int i = 1; i <= 18; i++) {
+            stock.put("p" + i, 50);
+        }
     }
 
     public synchronized boolean reserve(String productId, int quantity) {
