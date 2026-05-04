@@ -14,7 +14,7 @@ interface HeaderProps {
 
 export default function Header({ onSearchChange, onOpenCart, onReset }: HeaderProps) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [location, setLocation] = useState('Fetching Location...');
+  const [location, setLocation] = useState('Mumbai, Maharashtra');
   const itemsCount = useCart((state) => state.items.length);
   const total = useCart((state) => state.total());
   const { user, isAuthenticated, logout } = useAuth();
@@ -28,14 +28,10 @@ export default function Header({ onSearchChange, onOpenCart, onReset }: HeaderPr
           const data = await res.json();
           const address = data.address.suburb || data.address.neighbourhood || data.address.village || data.address.city || 'Mumbai';
           setLocation(`${address}, ${data.address.state || 'Maharashtra'}`);
-        } catch (error) {
+        } catch {
           setLocation(`Mumbai, ${latitude.toFixed(2)}, ${longitude.toFixed(2)}`);
         }
-      }, () => {
-        setLocation('Mumbai, Maharashtra');
       });
-    } else {
-      setLocation('Mumbai, Maharashtra');
     }
   }, []);
 
