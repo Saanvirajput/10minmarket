@@ -33,6 +33,7 @@ export default function ProductCard({ product }: ProductProps) {
           src={product.image}
           alt={product.name}
           fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 15vw"
           className="object-contain p-4 group-hover:scale-110 transition-transform duration-500"
         />
         {product.originalPrice > product.price && (

@@ -31,4 +31,10 @@ public class OrderController {
     public SseEmitter streamEvents() {
         return eventStream.subscribe();
     }
+
+    @PostMapping("/search")
+    public ResponseEntity<Void> logSearch(@RequestBody String query) {
+        eventStream.broadcast("ELASTICSEARCH", "Indexing & Searching for query: '" + query + "'", "info");
+        return ResponseEntity.ok().build();
+    }
 }

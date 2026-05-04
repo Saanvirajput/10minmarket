@@ -1,12 +1,14 @@
 'use client';
 import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
+import CartDrawer from '@/components/CartDrawer';
+import Footer from '@/components/Footer';
 import ArchitectureObserver from '@/components/ArchitectureObserver';
 import { products, categories } from '@/lib/seed-data';
 import { runOrderSaga, useSimulation } from '@/lib/simulation-engine';
 import { useCart } from '@/lib/cart-store';
 import { ShoppingBag, Zap, ChevronRight, SlidersHorizontal } from 'lucide-react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -14,11 +16,26 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const connect = useSimulation((state) => state.connect);
 
   useEffect(() => {
     connect();
   }, [connect]);
+
+  // Log search to backend (Debounced)
+  useEffect(() => {
+    if (!searchQuery) return;
+    const timer = setTimeout(() => {
+      fetch('http://localhost:8080/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchQuery),
+      });
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
@@ -35,6 +52,7 @@ export default function Home() {
     const success = await runOrderSaga(orderId, items);
     if (success) {
       clearCart();
+      setIsCartOpen(false);
       alert(`Order ${orderId} placed successfully! Check the system monitor for details.`);
     } else {
       alert(`Order failed. The Saga pattern successfully rolled back all changes.`);
@@ -42,11 +60,26 @@ export default function Home() {
     setIsProcessing(false);
   };
 
+  const handleCategoryClick = (id: string) => {
+    setActiveCategory(id === activeCategory ? null : id);
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleReset = () => {
+    setSearchQuery('');
+    setActiveCategory(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <main className="min-h-screen bg-[#F8FAFC]">
-      <Header onSearchChange={setSearchQuery} />
+      <Header 
+        onSearchChange={setSearchQuery} 
+        onOpenCart={() => setIsCartOpen(true)} 
+        onReset={handleReset}
+      />
       
-      {/* Banner - Only show if no search/filter */}
+      {/* Banner - Functional */}
       {!searchQuery && !activeCategory && (
         <section className="px-4 md:px-8 max-w-7xl mx-auto mt-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -54,19 +87,20 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.01 }}
+              onClick={() => handleCategoryClick('dairy')}
               className="bg-purple-100 rounded-[32px] p-10 relative overflow-hidden h-64 md:h-80 flex flex-col justify-center cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500"
             >
               <div className="relative z-10">
                 <div className="bg-white/50 backdrop-blur-sm w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-purple-700 mb-4">
-                  New Launch
+                  Fresh Arrivals
                 </div>
                 <h2 className="text-4xl font-black text-purple-900 leading-none tracking-tighter">
-                  THE <span className="text-purple-600 italic">NEXT GEN</span><br />10MIN DELIVERY
+                  THE <span className="text-purple-600 italic">DAIRY & EGGS</span><br />COLLECTION
                 </h2>
                 <div className="flex gap-4 mt-6">
                   <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm">
                     <Zap size={14} className="text-purple-600" fill="currentColor" />
-                    <span className="text-xs font-black text-purple-900">FREE DELIVERY</span>
+                    <span className="text-xs font-black text-purple-900">ORDER NOW</span>
                   </div>
                 </div>
               </div>
@@ -77,15 +111,16 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.01 }}
+              onClick={() => handleCategoryClick('laundry')}
               className="bg-[#101827] rounded-[32px] p-10 relative overflow-hidden h-64 md:h-80 flex flex-col justify-center text-white cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500"
             >
               <div className="relative z-10">
                 <h2 className="text-4xl font-black leading-none tracking-tighter mb-4">
-                  PAAN<br /><span className="text-[var(--zepto-pink)]">CORNER</span>
+                  HOUSEHOLD<br /><span className="text-[var(--zepto-pink)]">ESSENTIALS</span>
                 </h2>
-                <p className="text-sm text-gray-400 font-bold max-w-[200px]">Get smoking accessories & more delivered in 10 minutes.</p>
+                <p className="text-sm text-gray-400 font-bold max-w-[200px]">Stock up on cleaning supplies and daily needs.</p>
                 <button className="bg-white text-black font-black px-8 py-4 rounded-2xl mt-8 text-sm hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-2">
-                  Order Now <ChevronRight size={18} />
+                  Shop Now <ChevronRight size={18} />
                 </button>
               </div>
               <div className="absolute right-[-40px] top-[-40px] w-64 h-64 bg-purple-500/20 rounded-full blur-[100px]" />
@@ -117,7 +152,7 @@ export default function Home() {
             <motion.div 
               key={cat.id} 
               whileHover={{ y: -5 }}
-              onClick={() => setActiveCategory(cat.id === activeCategory ? null : cat.id)}
+              onClick={() => handleCategoryClick(cat.id)}
               className={`flex-shrink-0 cursor-pointer p-2 rounded-[24px] transition-all duration-300 min-w-[120px] flex flex-col items-center border-2 ${activeCategory === cat.id ? 'bg-white border-[var(--zepto-purple)] shadow-xl' : 'bg-transparent border-transparent hover:bg-white/50'}`}
             >
               <div className={`w-20 h-20 rounded-[20px] flex items-center justify-center text-4xl mb-3 transition-all ${activeCategory === cat.id ? 'bg-purple-50' : 'bg-gray-50'}`}>
@@ -132,7 +167,7 @@ export default function Home() {
       </section>
 
       {/* Results Section */}
-      <section className="px-4 md:px-8 max-w-7xl mx-auto pb-32 min-h-[500px]">
+      <section ref={resultsRef} className="px-4 md:px-8 max-w-7xl mx-auto pb-32 min-h-[500px]">
         <div className="flex items-center justify-between mb-10 bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-gray-50 rounded-xl">
@@ -177,14 +212,15 @@ export default function Home() {
         </AnimatePresence>
       </section>
 
-      {/* Floating Checkout Bar */}
+      {/* Floating Checkout Bar - Simplified, triggers drawer */}
       <AnimatePresence>
         {items.length > 0 && (
           <motion.div 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg bg-black text-white p-5 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-[90] flex items-center justify-between border border-white/10"
+            onClick={() => setIsCartOpen(true)}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg bg-black text-white p-5 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-[90] flex items-center justify-between border border-white/10 cursor-pointer hover:scale-[1.02] transition-all"
           >
             <div className="flex items-center gap-4">
               <div className="bg-white/10 p-3 rounded-2xl">
@@ -192,21 +228,25 @@ export default function Home() {
               </div>
               <div className="flex flex-col">
                 <div className="text-sm font-black">{items.length} Items</div>
-                <div className="text-xs font-bold text-gray-400 italic">Total: ₹{total()}</div>
+                <div className="text-xs font-bold text-gray-400 italic">View Cart Details</div>
               </div>
             </div>
-            <button 
-              onClick={handleCheckout}
-              disabled={isProcessing}
-              className="bg-[var(--zepto-pink)] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-pink-500/20"
-            >
-              {isProcessing ? 'Processing...' : 'Checkout Now'}
-              <Zap size={18} fill="currentColor" />
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="text-lg font-black mr-2">₹{total()}</div>
+              <ChevronRight size={24} />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      <CartDrawer 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        onCheckout={handleCheckout}
+        isProcessing={isProcessing}
+      />
+
+      <Footer />
       <ArchitectureObserver />
     </main>
   );

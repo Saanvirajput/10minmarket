@@ -8,9 +8,11 @@ import { motion } from 'framer-motion';
 
 interface HeaderProps {
   onSearchChange?: (query: string) => void;
+  onOpenCart?: () => void;
+  onReset?: () => void;
 }
 
-export default function Header({ onSearchChange }: HeaderProps) {
+export default function Header({ onSearchChange, onOpenCart, onReset }: HeaderProps) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [location, setLocation] = useState('Select Location');
   const itemsCount = useCart((state) => state.items.length);
@@ -35,7 +37,7 @@ export default function Header({ onSearchChange }: HeaderProps) {
           <motion.div 
             whileHover={{ scale: 1.02 }}
             className="flex-shrink-0 cursor-pointer" 
-            onClick={() => window.location.reload()}
+            onClick={onReset}
           >
             <h1 className="text-2xl font-black text-black italic tracking-tighter flex items-center gap-1">
               10min<span className="text-[var(--zepto-purple)]">market</span>
@@ -97,7 +99,10 @@ export default function Header({ onSearchChange }: HeaderProps) {
               </button>
             )}
             
-            <button className="bg-[var(--zepto-purple)] text-white px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-3 hover:shadow-xl hover:shadow-purple-200 active:scale-95 transition-all">
+            <button 
+              onClick={onOpenCart}
+              className="bg-[var(--zepto-purple)] text-white px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-3 hover:shadow-xl hover:shadow-purple-200 active:scale-95 transition-all"
+            >
               <div className="relative">
                 <ShoppingBag size={20} />
                 {itemsCount > 0 && (
