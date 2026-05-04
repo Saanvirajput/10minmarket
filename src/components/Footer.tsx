@@ -1,5 +1,5 @@
 'use client';
-import { Globe, MessageCircle, Share2, Activity, Zap, MapPin, Mail, Phone } from 'lucide-react';
+import { Globe, MessageCircle, Share2, Activity, MapPin, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Footer() {

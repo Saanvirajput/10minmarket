@@ -8,6 +8,13 @@ export interface SystemLog {
   type: 'info' | 'success' | 'warning' | 'error';
 }
 
+interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 interface SimulationState {
   logs: SystemLog[];
   inventory: Record<string, number>;
@@ -24,7 +31,7 @@ const BACKEND_URL = 'http://localhost:8080';
 export const useSimulation = create<SimulationState>((set, get) => ({
   logs: [],
   activeSagas: {},
-  inventory: {}, // Not used locally anymore, but kept for compatibility
+  inventory: {},
 
   addLog: (log) => {
     set((state) => ({ logs: [log, ...state.logs].slice(0, 50) }));
@@ -81,7 +88,7 @@ export const useSimulation = create<SimulationState>((set, get) => ({
   }
 }));
 
-export const runOrderSaga = async (orderId: string, items: any[]) => {
+export const runOrderSaga = async (orderId: string, items: OrderItem[]) => {
   try {
     const response = await fetch(`${BACKEND_URL}/api/orders`, {
       method: 'POST',

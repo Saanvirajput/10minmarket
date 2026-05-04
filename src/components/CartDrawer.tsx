@@ -12,7 +12,7 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose, onCheckout, isProcessing }: CartDrawerProps) {
-  const { items, addItem, removeItem, total, clearCart } = useCart();
+  const { items, addItem, removeItem, total } = useCart();
 
   return (
     <AnimatePresence>
@@ -70,7 +70,7 @@ export default function CartDrawer({ isOpen, onClose, onCheckout, isProcessing }
                     className="flex items-center gap-4 group"
                   >
                     <div className="relative w-20 h-20 bg-gray-50 rounded-2xl overflow-hidden p-2 flex-shrink-0">
-                      <Image src={item.image} alt={item.name} fill className="object-contain p-2" />
+                      <Image src={item.image} alt={item.name} fill sizes="80px" className="object-contain p-2" />
                     </div>
                     
                     <div className="flex-grow">
