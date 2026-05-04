@@ -11,8 +11,8 @@ public class InventoryService {
 
     public InventoryService(EventStreamService eventStream) {
         this.eventStream = eventStream;
-        // Seed data for all products p1 through p18
-        for (int i = 1; i <= 18; i++) {
+        // Seed data for all products p1 through p31
+        for (int i = 1; i <= 31; i++) {
             stock.put("p" + i, 50);
         }
     }

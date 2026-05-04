@@ -134,14 +134,50 @@ export default function ArchitectureObserver() {
               className="space-y-6 pt-2"
             >
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-colors">
-                  <div className="text-gray-500 text-[8px] uppercase font-black tracking-widest mb-2">P99 Latency</div>
-                  <div className="text-3xl font-black text-green-400 tracking-tighter">{metrics.latency}<span className="text-xs ml-1 text-green-800">ms</span></div>
+                <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-colors group">
+                  <div className="text-gray-500 text-[8px] uppercase font-black tracking-widest mb-2 flex justify-between">
+                    P99 Latency
+                    <span className="text-green-500 font-bold group-hover:scale-110 transition-transform">↓ 2%</span>
+                  </div>
+                  <div className="text-3xl font-black text-green-400 tracking-tighter flex items-end gap-1">
+                    {metrics.latency}
+                    <span className="text-[10px] mb-1.5 text-green-900 font-bold uppercase">ms</span>
+                  </div>
+                  {/* Micro Chart */}
+                  <div className="flex gap-0.5 h-6 mt-4 items-end opacity-20">
+                    {[4, 7, 5, 8, 4, 9, 6, 8, 4, 7, 5].map((h, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${h * 10}%` }}
+                        transition={{ delay: i * 0.05 }}
+                        className="flex-1 bg-green-500 rounded-t-[1px]"
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-colors">
-                  <div className="text-gray-500 text-[8px] uppercase font-black tracking-widest mb-2">Throughput</div>
-                  <div className="text-3xl font-black text-blue-400 tracking-tighter">{metrics.throughput}</div>
+                
+                <div className="bg-white/[0.03] rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-colors group">
+                  <div className="text-gray-500 text-[8px] uppercase font-black tracking-widest mb-2 flex justify-between">
+                    Throughput
+                    <span className="text-blue-500 font-bold">LIVE</span>
+                  </div>
+                  <div className="text-3xl font-black text-blue-400 tracking-tighter">
+                    {metrics.throughput}
+                  </div>
                   <div className="text-[8px] text-gray-600 font-bold mt-1 uppercase">Requests / Sec</div>
+                  {/* Micro Chart */}
+                  <div className="flex gap-0.5 h-6 mt-4 items-end opacity-20">
+                    {[6, 4, 8, 5, 9, 7, 8, 6, 9, 5, 8].map((h, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${h * 10}%` }}
+                        transition={{ delay: i * 0.05 }}
+                        className="flex-1 bg-blue-500 rounded-t-[1px]"
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -170,20 +206,50 @@ export default function ArchitectureObserver() {
               </div>
 
               <div className="bg-blue-500/5 border border-blue-500/20 rounded-3xl p-6">
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-6">
                   <div className="bg-blue-500/20 p-2 rounded-xl">
                     <Cloud size={16} className="text-blue-400" />
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-blue-400">Global Cluster Health</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-blue-400">System Topology</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                
+                {/* Visual Topology Diagram */}
+                <div className="relative h-48 bg-black/40 rounded-2xl border border-white/5 overflow-hidden p-4">
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                  
+                  {/* Nodes */}
+                  <div className="relative h-full flex flex-col items-center justify-between">
+                    <div className="bg-purple-500/20 border border-purple-500/40 px-3 py-1 rounded text-[8px] font-black text-purple-400 z-10">NEXT.JS FRONTEND</div>
+                    
+                    <div className="w-full flex justify-around">
+                      <div className="bg-blue-500/20 border border-blue-500/40 px-3 py-1 rounded text-[8px] font-black text-blue-400 z-10">SPRING API</div>
+                      <div className="bg-yellow-500/20 border border-yellow-500/40 px-3 py-1 rounded text-[8px] font-black text-yellow-400 z-10">KAFKA MESH</div>
+                    </div>
+                    
+                    <div className="w-full flex justify-around">
+                      <div className="bg-green-500/20 border border-green-500/40 px-3 py-1 rounded text-[8px] font-black text-green-400 z-10">REDIS INVENTORY</div>
+                      <div className="bg-red-500/20 border border-red-500/40 px-3 py-1 rounded text-[8px] font-black text-red-400 z-10">H2 DATABASE</div>
+                    </div>
+
+                    {/* Connection Lines (CSS) */}
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
+                      <line x1="50%" y1="20%" x2="25%" y2="50%" stroke="#6366f1" strokeWidth="1" strokeDasharray="4" />
+                      <line x1="50%" y1="20%" x2="75%" y2="50%" stroke="#6366f1" strokeWidth="1" strokeDasharray="4" />
+                      <line x1="25%" y1="50%" x2="25%" y2="80%" stroke="#3b82f6" strokeWidth="1" />
+                      <line x1="75%" y1="50%" x2="75%" y2="80%" stroke="#eab308" strokeWidth="1" />
+                      <line x1="25%" y1="50%" x2="75%" y2="50%" stroke="#3b82f6" strokeWidth="1" strokeDasharray="2" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mt-6">
                   <div className="bg-black/40 p-3 rounded-2xl border border-white/5">
-                    <div className="text-[8px] text-gray-500 uppercase font-bold mb-1">AWS US-EAST-1</div>
-                    <div className="text-[10px] font-black text-green-500">OPERATIONAL</div>
+                    <div className="text-[8px] text-gray-500 uppercase font-bold mb-1">Service Mesh</div>
+                    <div className="text-[10px] font-black text-green-500">ISTIO ACTIVE</div>
                   </div>
                   <div className="bg-black/40 p-3 rounded-2xl border border-white/5">
-                    <div className="text-[8px] text-gray-500 uppercase font-bold mb-1">AWS AP-SOUTH-1</div>
-                    <div className="text-[10px] font-black text-green-500">OPERATIONAL</div>
+                    <div className="text-[8px] text-gray-500 uppercase font-bold mb-1">Consistency</div>
+                    <div className="text-[10px] font-black text-blue-500">EVENTUAL</div>
                   </div>
                 </div>
               </div>

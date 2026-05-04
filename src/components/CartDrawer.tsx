@@ -51,16 +51,33 @@ export default function CartDrawer({ isOpen, onClose, onCheckout, isProcessing }
             {/* Items List */}
             <div className="flex-grow overflow-y-auto p-6 space-y-6">
               {items.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-4xl mb-4">🛒</div>
-                  <h3 className="text-lg font-bold">Your cart is empty</h3>
-                  <p className="text-sm">Add some items to get started!</p>
-                  <button 
-                    onClick={onClose}
-                    className="mt-6 text-[var(--zepto-purple)] font-black text-sm uppercase tracking-widest"
+                <div className="h-full flex flex-col items-center justify-center text-center p-8">
+                  <motion.div 
+                    initial={{ scale: 0, rotate: -20 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    className="w-48 h-48 bg-purple-50 rounded-full flex items-center justify-center text-8xl mb-8 relative"
                   >
-                    Start Shopping
-                  </button>
+                    🛒
+                    <motion.div 
+                      animate={{ y: [0, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute -top-2 -right-2 text-4xl"
+                    >
+                      ✨
+                    </motion.div>
+                  </motion.div>
+                  <h3 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">Your cart is feeling light!</h3>
+                  <p className="text-sm text-gray-500 font-bold max-w-[240px] leading-relaxed mb-10">
+                    Add some items from our freshest collection and get them in 10 minutes.
+                  </p>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={onClose}
+                    className="bg-[var(--zepto-purple)] text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-purple-100"
+                  >
+                    Browse Categories
+                  </motion.button>
                 </div>
               ) : (
                 items.map((item) => (

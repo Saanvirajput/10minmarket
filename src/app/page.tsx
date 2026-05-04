@@ -130,6 +130,34 @@ export default function Home() {
         </section>
       )}
 
+      {/* Trending Now Horizontal Scroll */}
+      {!searchQuery && !activeCategory && (
+        <section className="py-12 pl-4 md:pl-8 max-w-7xl mx-auto overflow-hidden">
+          <div className="flex items-center justify-between mb-8 pr-4 md:pr-8">
+            <div className="flex flex-col">
+              <h2 className="text-2xl font-black tracking-tight">Trending Now</h2>
+              <p className="text-xs font-bold text-[var(--zepto-pink)] uppercase tracking-widest mt-1">Hottest picks this week</p>
+            </div>
+            <div className="flex gap-2">
+              <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 cursor-pointer hover:bg-white hover:shadow-md transition-all">
+                <ChevronRight size={20} className="rotate-180" />
+              </div>
+              <div className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 cursor-pointer hover:bg-white hover:shadow-md transition-all">
+                <ChevronRight size={20} />
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar pr-8">
+            {products.slice(0, 8).map((product) => (
+              <div key={product.id} className="min-w-[200px] w-[200px]">
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Categories Horizontal Scroll */}
       <section className="py-12 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="flex items-center justify-between mb-8">
@@ -151,14 +179,18 @@ export default function Home() {
           {categories.map((cat) => (
             <motion.div 
               key={cat.id} 
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -8, scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleCategoryClick(cat.id)}
-              className={`flex-shrink-0 cursor-pointer p-2 rounded-[24px] transition-all duration-300 min-w-[120px] flex flex-col items-center border-2 ${activeCategory === cat.id ? 'bg-white border-[var(--zepto-purple)] shadow-xl' : 'bg-transparent border-transparent hover:bg-white/50'}`}
+              className={`flex-shrink-0 cursor-pointer p-2 rounded-[32px] transition-all duration-500 min-w-[130px] flex flex-col items-center border-2 ${activeCategory === cat.id ? 'bg-white border-[var(--zepto-purple)] shadow-[0_20px_40px_rgba(60,0,107,0.1)]' : 'bg-transparent border-transparent hover:bg-white/80'}`}
             >
-              <div className={`w-20 h-20 rounded-[20px] flex items-center justify-center text-4xl mb-3 transition-all ${activeCategory === cat.id ? 'bg-purple-50' : 'bg-gray-50'}`}>
+              <motion.div 
+                animate={activeCategory === cat.id ? { scale: [1, 1.2, 1] } : {}}
+                className={`w-24 h-24 rounded-[24px] flex items-center justify-center text-5xl mb-4 transition-all duration-500 ${activeCategory === cat.id ? 'bg-purple-50 rotate-6' : 'bg-gray-50 group-hover:rotate-3'}`}
+              >
                 {cat.icon}
-              </div>
-              <span className={`text-[11px] font-black uppercase tracking-tight text-center px-2 leading-tight ${activeCategory === cat.id ? 'text-purple-900' : 'text-gray-500'}`}>
+              </motion.div>
+              <span className={`text-[11px] font-black uppercase tracking-tight text-center px-2 leading-tight transition-colors duration-500 ${activeCategory === cat.id ? 'text-purple-900' : 'text-gray-500'}`}>
                 {cat.name}
               </span>
             </motion.div>
