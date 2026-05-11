@@ -7,7 +7,7 @@ A high-fidelity, production-ready replica of **ultra-fast delivery systems** (in
 
 ---
 
-## 🦋 System Architecture (Butterfly Flow)
+##  System Architecture (Butterfly Flow)
 
 The architecture follows a "Butterfly" pattern where the **Saga Coordinator** acts as the central nervous system, balancing inbound request handling with outbound service orchestration.
 
