@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { CONFIG } from './config';
 
 export interface SystemLog {
   id: string;
@@ -26,7 +27,7 @@ interface SimulationState {
   connect: () => void;
 }
 
-const BACKEND_URL = 'http://localhost:8080';
+const BACKEND_URL = CONFIG.BACKEND_URL;
 
 export const useSimulation = create<SimulationState>((set, get) => ({
   logs: [],

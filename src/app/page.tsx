@@ -7,6 +7,7 @@ import ArchitectureObserver from '@/components/ArchitectureObserver';
 import { products, categories } from '@/lib/seed-data';
 import { runOrderSaga, useSimulation } from '@/lib/simulation-engine';
 import { useCart } from '@/lib/cart-store';
+import { CONFIG } from '@/lib/config';
 import { ShoppingBag, Zap, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,7 +29,7 @@ export default function Home() {
   useEffect(() => {
     if (!searchQuery) return;
     const timer = setTimeout(() => {
-      fetch('http://localhost:8080/api/search', {
+      fetch(`${CONFIG.BACKEND_URL}/api/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(searchQuery),
